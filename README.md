@@ -10,7 +10,7 @@ Here is a list of what each of the buttons do:
 
 ## How to use the tool
 
-For every object:
+For every object you want to add:
 1. Add an object by clicking the **text** or **icon** buttons at the top of the canvas
 2. Modify the text/icon by using the prompt at the left of the screen
 3. Move/scale the object
