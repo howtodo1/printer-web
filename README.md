@@ -16,3 +16,7 @@ For every object:
 3. Move/scale the object
 
 Do this enough times and your objects will come together to make something cool!
+
+## 3D printer setup
+
+If you are going to use your own 3D printer to print the art, you should somehow mount a pen to the side of the nozzle and check which Z levels should be classified as "pen up" or "pen down". Once you know what the z levels are, you can replace the {UP} with "G0 Z{your up z level}" and {DOWN} with "G0 Z{your down z level}". The {SPEED} should be replaced with F{the desired speed of the nozzle in mm/min)
