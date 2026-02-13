@@ -116,7 +116,7 @@ export default function Home() {
   };
 
   const createText = () => {
-    const path = new Path(TextToSVG("enter text hereeeeeeeeee"), {
+    const path = new Path(TextToSVG("enter text hereeeeee"), {
       left: 50,
       top: 50,
       fill: "",
@@ -124,7 +124,7 @@ export default function Home() {
       strokeWidth: 0.2,
       otype: ObjectType.Text,
       font: 0,
-      data: "enter text hereeeeeeeeee",
+      data: "enter text hereeeeee",
     });
     canvas?.add(path);
     canvas?.setActiveObject(path);
