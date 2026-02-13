@@ -1,5 +1,5 @@
 import type { Route } from "./+types/home";
-import React, { useState, useEffect, use } from "react";
+import React, { useState, useEffect, use, useRef } from "react";
 import {
   StaticCanvas,
   util,
@@ -75,6 +75,7 @@ export default function Home() {
   const [icons, seticons] = useState<string[]>([]);
   const [sent, setsent] = useState(false);
   const [download, setdownload] = useState(false);
+  const icdiv = useRef<HTMLDivElement | null>(null);
   const updateText = (obj: FabricObject, text: string) => {
     obj.set({ path: new Path(TextToSVG(text)).path });
     obj.data = text;
@@ -208,8 +209,8 @@ export default function Home() {
         (o): o is FabricObject => o !== null,
       );
 
-      for(const obj of objects){
-        c?.add(obj)
+      for (const obj of objects) {
+        c?.add(obj);
       }
       c?.requestRenderAll();
     });
@@ -282,20 +283,47 @@ export default function Home() {
             >
               Search
             </button>
-            <div className="flex space-x-2 mt-5 p-2 overflow-x-scroll h-[60px] border">
-              {icons.map((key) => {
-                return (
-                  <img
-                    loading="lazy"
-                    decoding="async"
-                    onClick={() => updateIcon(activeObject, key)}
-                    className="hover:border"
-                    src={`/icons/${key}.svg`}
-                    alt="home"
-                    width={400}
-                  />
-                );
-              })}
+            <div>
+              <div
+                ref={icdiv}
+                className="flex space-x-2 mt-5 p-2 overflow-x-scroll h-[60px] border"
+              >
+                {icons.map((key) => {
+                  return (
+                    <img
+                      loading="lazy"
+                      decoding="async"
+                      onClick={() => updateIcon(activeObject, key)}
+                      className="hover:border"
+                      src={`/icons/${key}.svg`}
+                      alt="home"
+                      width={400}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+            <div className="flex justify-between">
+              <button
+                onClick={() => {
+                  if (icdiv.current) {
+                    icdiv.current.scrollBy({ left: -100, behavior: "smooth" });
+                  }
+                }}
+                className="hover:text-gray-500 hover:cursor-pointer"
+              >
+                {"<-"}
+              </button>
+              <button
+                onClick={() => {
+                  if (icdiv.current) {
+                    icdiv.current.scrollBy({ left: 100, behavior: "smooth" });
+                  }
+                }}
+                className="hover:text-gray-500 hover:cursor-pointer"
+              >
+                {"->"}
+              </button>
             </div>
             <span>{`${icons.length} icons found`}</span>
             <button
