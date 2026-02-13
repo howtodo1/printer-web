@@ -24,7 +24,6 @@ export function meta({}: Route.MetaArgs) {
 import { createClient } from "@supabase/supabase-js";
 import { useLocation } from "react-router";
 
-
 // dont worry, this key is meant to be published
 export const supabase = createClient(
   "https://btpljlgfajycbpehdich.supabase.co",
@@ -75,6 +74,7 @@ export default function Home() {
   const [search, setsearch] = useState<String>("");
   const [icons, seticons] = useState<string[]>([]);
   const [sent, setsent] = useState(false);
+  const [download, setdownload] = useState(false);
   const updateText = (obj: FabricObject, text: string) => {
     obj.set({ path: new Path(TextToSVG(text)).path });
     obj.data = text;
@@ -127,7 +127,7 @@ export default function Home() {
       data: "entertexthere",
     });
     canvas?.add(path);
-    canvas?.setActiveObject(path)
+    canvas?.setActiveObject(path);
   };
   const createIcons = () => {
     loadSVGFromString(svgString).then((result) => {
@@ -141,7 +141,7 @@ export default function Home() {
 
       SVG.set({ left: 40, top: 5, scaleX: 0.1, scaleY: 0.1 });
       canvas?.add(SVG);
-      canvas?.setActiveObject(SVG)
+      canvas?.setActiveObject(SVG);
       canvas?.requestRenderAll();
     });
   };
@@ -163,11 +163,26 @@ export default function Home() {
           );
           console.log("test");
           console.log(mod.FS.readdir("/"));
-          console.log(mod.FS.readFile("/out.gcode", { encoding: "utf8" }));
+          const content = mod.FS.readFile("/out.gcode", { encoding: "utf8" }) as string;
+          console.log(content);
+          if (download) {
+            const blob = new Blob([content], { type: "text/plain" });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "out.gcode";
+            document.body.appendChild(a);
+            a.click();
+
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            setdownload(false);
+          }
         }
       });
     }
-  }, [svg]);
+  }, [svg, download]);
 
   useEffect(() => {
     if (activeObject?.data) {
@@ -183,9 +198,9 @@ export default function Home() {
     console.log(createSvg());
     const params = new URLSearchParams(location.search);
     const b64 = params.get("svgB64");
-    console.log(b64)
+    console.log(b64);
     const svgText = b64 ? fromBase64Url(b64) : "";
-    console.log(svgText)
+    console.log(svgText);
     loadSVGFromString(svgText).then((result) => {
       const objects = result.objects.filter(
         (o): o is FabricObject => o !== null,
@@ -344,6 +359,17 @@ export default function Home() {
             }}
           >
             Preview image
+          </button>
+          <button
+            className="border hover:text-gray-500 hover:cursor-pointer w-36"
+            onClick={() => {
+              const str = canvas?.toSVG({ width: "100", height: "100" });
+              console.log(str);
+              setsvg(str ? str : null);
+              setdownload(true);
+            }}
+          >
+            Download GCODE
           </button>
           <button
             className="border hover:text-gray-500 hover:cursor-pointer w-36"
