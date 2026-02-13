@@ -33,6 +33,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
+        <div className="flex flex-col items-center pt-1 content-center justify-center w-full ">
+          <h1 className="text-6xl text-center">penprint</h1>
+          <span className="pt-2 px-64">Hello. This project is not complete yet and is very buggy. To test it out, I am letting people create images and send them to me. I will print some of these images at home. Use the buttons to add objects and change its properties on the left. Have fun!</span>
+          
+        </div>
         {children}
         <ScrollRestoration />
         <Scripts />
