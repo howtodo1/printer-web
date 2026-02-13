@@ -3746,7 +3746,7 @@ export function TextToSVG(text: string) {
   var x = 0;
 
   for (let j = 0; j < text.length; j++) {
-    let char = text.charCodeAt(j) - 64;
+    let char = text.charCodeAt(j) - 32;
     for (let i = 0; i < fonts[char].cords.length; i += 2) {
       if (fonts[char].cords[i] == -69) {
         i += 2;

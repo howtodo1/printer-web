@@ -116,7 +116,7 @@ export default function Home() {
   };
 
   const createText = () => {
-    const path = new Path(TextToSVG("entertexthere"), {
+    const path = new Path(TextToSVG("enter text hereeeeeeeeee"), {
       left: 50,
       top: 50,
       fill: "",
@@ -124,7 +124,7 @@ export default function Home() {
       strokeWidth: 0.2,
       otype: ObjectType.Text,
       font: 0,
-      data: "entertexthere",
+      data: "enter text hereeeeeeeeee",
     });
     canvas?.add(path);
     canvas?.setActiveObject(path);
@@ -163,7 +163,9 @@ export default function Home() {
           );
           console.log("test");
           console.log(mod.FS.readdir("/"));
-          const content = mod.FS.readFile("/out.gcode", { encoding: "utf8" }) as string;
+          const content = mod.FS.readFile("/out.gcode", {
+            encoding: "utf8",
+          }) as string;
           console.log(content);
           if (download) {
             const blob = new Blob([content], { type: "text/plain" });
@@ -246,13 +248,13 @@ export default function Home() {
 
   return (
     <div className="flex items-center content-center justify-center">
-      <div className="border text-center pb-2 h-[200px] w-[200px] ">
+      <div className="border px-3 py-2 h-[300px] w-[200px] ">
         {activeObject ? "" : "No object selected"}
         {activeObject?.otype == ObjectType.Svg ? (
-          <div>
+          <div className="flex flex-col">
             <h1 className="text-center text-xl font-bold">Icon</h1>
             <input
-              className="border rounded py-0.5  mb-1"
+              className="border w-5/6 rounded py-0.5  mb-1"
               placeholder="leave empty for all"
               value={search.toString()}
               onKeyDownCapture={(e) => e.stopPropagation()}
@@ -261,7 +263,7 @@ export default function Home() {
               onChange={(e) => setsearch(e.target.value)}
             ></input>
             <button
-              className="border px-2 hover:text-gray-500 hover:cursor-pointer"
+              className="border w-1/2 px-2 hover:text-gray-500 hover:cursor-pointer"
               onClick={() => {
                 seticons(
                   Object.keys(ricons).filter((key) => {
@@ -295,6 +297,14 @@ export default function Home() {
               })}
             </div>
             <span>{`${icons.length} icons found`}</span>
+            <button
+              className="border w-1/2 px-2 text-red-900 hover:text-red-500 hover:cursor-pointer"
+              onClick={() => {
+                canvas?.remove(activeObject);
+              }}
+            >
+              Delete
+            </button>
           </div>
         ) : (
           ""
@@ -303,7 +313,7 @@ export default function Home() {
           <div>
             <h1 className="text-center text-xl font-bold">Text</h1>
             <input
-              className="border rounded py-0.5  mb-1"
+              className="border w-5/6 rounded py-0.5  mb-1"
               value={typing.toString()}
               placeholder="Input text here"
               onKeyDownCapture={(e) => e.stopPropagation()}
@@ -311,6 +321,14 @@ export default function Home() {
               onKeyUpCapture={(e) => e.stopPropagation()}
               onChange={(e) => updateText(activeObject, e.target.value)}
             ></input>
+            <button
+              className="border px-2 text-red-900 hover:text-red-500 hover:cursor-pointer"
+              onClick={() => {
+                canvas?.remove(activeObject);
+              }}
+            >
+              Delete
+            </button>
           </div>
         ) : (
           ""
