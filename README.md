@@ -15,4 +15,4 @@ For every object:
 2. Modify the text/icon by using the prompt at the left of the screen
 3. Move/scale the object
 
-Do this enough times and your objects will come together to make something cool!.
+Do this enough times and your objects will come together to make something cool!
