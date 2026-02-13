@@ -208,8 +208,9 @@ export default function Home() {
         (o): o is FabricObject => o !== null,
       );
 
-      const SVG = util.groupSVGElements(objects, result.options);
-      c?.add(SVG);
+      for(const obj of objects){
+        c?.add(obj)
+      }
       c?.requestRenderAll();
     });
     const handleSelection = (selected: FabricObject | null) => {
@@ -281,7 +282,7 @@ export default function Home() {
             >
               Search
             </button>
-            <div className="flex space-x-2 mt-5 p-2 overflow-scroll h-[60px] border">
+            <div className="flex space-x-2 mt-5 p-2 overflow-x-scroll h-[60px] border">
               {icons.map((key) => {
                 return (
                   <img
