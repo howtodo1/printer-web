@@ -3,7 +3,7 @@ PenPrint is a tool that allows you to create vector art and easily convert that 
 > **Note:** the settings are fixed for a 100mmx100mm 3D printer. The base size will be adjustable in the future
 
 Here is a list of what each of the buttons do:
-- **Preview image:** This shows how the image would look like if it was drawn using pen strokes. This is useful since the drawing/icon version of the image displays additional detail that would be stripped away when we convert it into pen strokes.
+- **Preview image:** This shows how the image would look like if it was drawn using pen strokes. This is useful since the editor version of the image displays additional detail that would be stripped away when we convert it into pen strokes.
 - **Generate GCODE:** This downloads the gcode file for use with the 3D printer. Running the gcode on the printer should make the nozzle follow the vector art you made
 > **Note:** currently, the gcode file has placeholder **{SPEED}**, **{UP}**, and **{DOWN}** values. In order for the gcode to function properly, the user must replace these placeholders with the appropriate gcode. For example, {UP} could be replaced with the gcode for "move the nozzle to position z = 7" (G0 Z7). 
 - **Send to me!:** If you do not have a 3D printer, but you want to see your vector art in drawing form, you have the option to send it to me. If I think the art is cool, I might print it and add it to the website :)
