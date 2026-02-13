@@ -75,6 +75,9 @@ export default function Home() {
   const [icons, seticons] = useState<string[]>([]);
   const [sent, setsent] = useState(false);
   const [download, setdownload] = useState(false);
+  const [up, setup] = useState("G0 Z10");
+  const [down, setdown] = useState("G0 Z5");
+  const [speed, setspeed] = useState(22);
   const icdiv = useRef<HTMLDivElement | null>(null);
   const updateText = (obj: FabricObject, text: string) => {
     obj.set({ path: new Path(TextToSVG(text)).path });
@@ -164,11 +167,17 @@ export default function Home() {
           );
           console.log("test");
           console.log(mod.FS.readdir("/"));
-          const content = mod.FS.readFile("/out.gcode", {
+          var content = mod.FS.readFile("/out.gcode", {
             encoding: "utf8",
           }) as string;
           console.log(content);
           if (download) {
+            content =
+              `G21\nG90\n${down}\nG28 X Y\n` +
+              content
+                .replaceAll("{UP}", up)
+                .replaceAll("{DOWN}", down)
+                .replaceAll("{SPEED}", "F" + (speed * 60).toString());
             const blob = new Blob([content], { type: "text/plain" });
             const url = URL.createObjectURL(blob);
 
@@ -364,6 +373,23 @@ export default function Home() {
         )}
       </div>
       <div className="flex h-screen flex-col items-center content-center justify-center">
+        <div className="flex flex-col w-full px-6">
+          <input
+            value={up}
+            placeholder={"GCODE PEN UP"}
+            className="border w-5/6 px-1 rounded py-0.5  mb-1"
+          ></input>
+          <input
+            value={down}
+            placeholder={"GCODE PEN DOWN"}
+            className="border w-5/6 px-1 rounded py-0.5  mb-1"
+          ></input>
+          <input
+            value={speed}
+            placeholder={"SPEED (mm/s)"}
+            className="border w-1/3 px-1 rounded py-0.5  mb-1"
+          ></input>
+        </div>
         <div className="flex w-[200px] content-center justify-around">
           <button
             onClick={createText}
