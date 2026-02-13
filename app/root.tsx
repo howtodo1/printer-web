@@ -35,7 +35,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <body>
         <div className="flex flex-col items-center pt-1 content-center justify-center w-full ">
           <h1 className="text-6xl text-center">penprint</h1>
-          <span className="pt-2 px-64">Hello. This project is not complete yet and is very buggy. To test it out, I am letting people create images and send them to me. I will print some of these images at home. Use the buttons to add objects and change its properties on the left. Have fun!</span>
+          <span className="pt-2 px-64">Hello. This project generates gcode for a 100mmx100mm base plate, and you will have to replace {"{SPEED}"}, {"{UP}"}, and {"{DOWN}"} from the generated file with the appropriate gcode. For people who do not have a 3d printer, I am letting people create images and send them to me! I will print some of these images at home and maybe even post it on this website... Use the buttons to add objects and change its properties on the left. Have fun!</span>
           
         </div>
         {children}
