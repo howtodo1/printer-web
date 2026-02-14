@@ -173,7 +173,7 @@ export default function Home() {
           console.log(content);
           if (download) {
             content =
-              `G21\nG90\n${down}\nG28 X Y\n` +
+              `G21\nG90\n${up}\nG28 X Y\n` +
               content
                 .replaceAll("{UP}", up)
                 .replaceAll("{DOWN}", down)
@@ -378,16 +378,28 @@ export default function Home() {
             value={up}
             placeholder={"GCODE PEN UP"}
             className="border w-5/6 px-1 rounded py-0.5  mb-1"
+            onKeyDownCapture={(e) => e.stopPropagation()}
+            onKeyPressCapture={(e) => e.stopPropagation()}
+            onKeyUpCapture={(e) => e.stopPropagation()}
+            onChange={(e) => setup(e.target.value)}
           ></input>
           <input
             value={down}
             placeholder={"GCODE PEN DOWN"}
             className="border w-5/6 px-1 rounded py-0.5  mb-1"
+            onKeyDownCapture={(e) => e.stopPropagation()}
+            onKeyPressCapture={(e) => e.stopPropagation()}
+            onKeyUpCapture={(e) => e.stopPropagation()}
+            onChange={(e) => setdown(e.target.value)}
           ></input>
           <input
             value={speed}
             placeholder={"SPEED (mm/s)"}
             className="border w-1/3 px-1 rounded py-0.5  mb-1"
+            onKeyDownCapture={(e) => e.stopPropagation()}
+            onKeyPressCapture={(e) => e.stopPropagation()}
+            onKeyUpCapture={(e) => e.stopPropagation()}
+            onChange={(e) => setspeed(Number(e.target.value))}
           ></input>
         </div>
         <div className="flex w-[200px] content-center justify-around">
