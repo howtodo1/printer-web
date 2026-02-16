@@ -82,12 +82,12 @@ export default function Home() {
   const [speed, setspeed] = useState(22);
   const icdiv = useRef<HTMLDivElement | null>(null);
   const updateText = (obj: FabricObject, text: string) => {
-    console.log(obj.lheight)
+    console.log(obj.lheight);
     obj.set({ path: new Path(TextToSVG(text, obj.lheight ?? 20)).path });
     obj.data = text;
     settyping(text);
-    obj.setDimensions();  
-    obj.setCoords()
+    obj.setDimensions();
+    obj.setCoords();
     canvas?.requestRenderAll();
   };
   const updateIcon = (obj: FabricObject, key: string) => {
@@ -134,7 +134,7 @@ export default function Home() {
       otype: ObjectType.Text,
       font: 0,
       data: "enter text hereeeeee",
-      lheight: 20
+      lheight: 20,
     });
     canvas?.add(path);
     canvas?.setActiveObject(path);
@@ -332,6 +332,18 @@ export default function Home() {
             >
               Delete
             </button>
+            <button
+              className="border w-1/2 px-2 mt-2 hover:text-gray-500 hover:cursor-pointer"
+              onClick={async () => {
+                let clone = await activeObject?.clone();
+                clone.top += 10;
+                clone.left += 10;
+                canvas?.add(clone);
+                canvas?.setActiveObject(clone);
+              }}
+            >
+              Duplicate
+            </button>
           </div>
         ) : (
           ""
@@ -355,7 +367,9 @@ export default function Home() {
               onKeyDownCapture={(e) => e.stopPropagation()}
               onKeyPressCapture={(e) => e.stopPropagation()}
               onKeyUpCapture={(e) => e.stopPropagation()}
-              onChange={(e) => {activeObject.lheight = Number(e.target.value)}}
+              onChange={(e) => {
+                activeObject.lheight = Number(e.target.value);
+              }}
             ></input>
             <button
               className="border px-2 text-red-900 hover:text-red-500 hover:cursor-pointer"
@@ -364,6 +378,18 @@ export default function Home() {
               }}
             >
               Delete
+            </button>
+            <button
+              className="border w-1/2 px-2 mt-2 hover:text-gray-500 hover:cursor-pointer"
+              onClick={async () => {
+                let clone = await activeObject?.clone();
+                clone.top += 10;
+                clone.left += 10;
+                canvas?.add(clone);
+                canvas?.setActiveObject(clone);
+              }}
+            >
+              Duplicate
             </button>
           </div>
         ) : (
