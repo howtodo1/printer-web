@@ -645,6 +645,7 @@ export const fonts = [
   },
 ];
 export const ricons: { [key: string]: string[] } = {
+  "111": ["minecraft"],
   "menu-button": ["dropdown", "menu", "context", "app", "ui"],
   "filetype-txt": ["file", "file type", "extension"],
   "file-earmark-check": ["doc", "document", "check", "verified"],
@@ -707,7 +708,7 @@ export const ricons: { [key: string]: string[] } = {
   "forward-fill": ["mail", "email"],
   "hand-index-fill": ["hand", "pointer", "cursor"],
   "file-spreadsheet": ["doc", "document", "excel", "table"],
-  ban: [false, "not allowed", "block"],
+  ban: ["no", "not allowed", "block"],
   "file-earmark-excel-fill": [
     "doc",
     "document",
@@ -1200,7 +1201,7 @@ export const ricons: { [key: string]: string[] } = {
   bookmark: ["reading", "book", "label", "tag", "category", "save"],
   "file-lock2": ["lock", "private", "secure"],
   basket2: ["shopping", "checkout", "check", "cart", "basket", "bag"],
-  "slash-circle": ["shape", "stop", "ban", false],
+  "slash-circle": ["shape", "stop", "ban", "no"],
   "arrow-bar-up": ["arrow"],
   "database-fill-up": ["server", "data"],
   "wallet-fill": ["cards", "money", "funds", "cash", "payment"],
@@ -1497,7 +1498,7 @@ export const ricons: { [key: string]: string[] } = {
   "filetype-mdx": ["file", "file type", "extension"],
   "sign-merge-left": ["road", "driving", "directions"],
   "8-circle-fill": ["number", "numeral"],
-  power: [false, true],
+  power: ["no", "yes"],
   "person-fill-gear": [
     "member",
     "human",
@@ -1699,7 +1700,7 @@ export const ricons: { [key: string]: string[] } = {
   "file-earmark-minus-fill": ["doc", "document", "delete", "remove"],
   "postage-heart-fill": ["mail", "stamp", "love", "valentine", "romance"],
   save2: ["save", "floppy"],
-  "globe-asia-australia-fill": null,
+  "globe-asia-australia-fill": [],
   "send-arrow-down": ["message", "sending", "sent", "paper-plane"],
   "calendar3-fill": ["date", "time", "month"],
   "sim-slash": ["mobile", "carrier"],
@@ -1721,7 +1722,7 @@ export const ricons: { [key: string]: string[] } = {
   union: ["graphics", "vector", "merge", "layers"],
   screwdriver: ["tool"],
   pen: ["edit", "write", "ballpoint"],
-  "slash-lg": ["shape", "stop", "ban", false, "math"],
+  "slash-lg": ["shape", "stop", "ban", "no", "math"],
   cursor: ["pointer"],
   "send-arrow-down-fill": ["message", "sending", "sent", "paper-plane"],
   "filetype-tsx": ["file", "file type", "extension", "code", "typescript"],
@@ -2168,7 +2169,7 @@ export const ricons: { [key: string]: string[] } = {
   "filetype-xlsx": ["file", "file type", "extension", "spreadsheet"],
   "file-earmark-text-fill": ["doc", "document"],
   "volume-off": ["audio", "video", "av", "sound"],
-  "slash-circle-fill": ["shape", "stop", "ban", false],
+  "slash-circle-fill": ["shape", "stop", "ban", "no"],
   hypnotize: ["hypnosis", "sleepy"],
   "train-freight-front-fill": ["transit", "public", "rail"],
   "chat-left-quote-fill": [
@@ -2355,7 +2356,7 @@ export const ricons: { [key: string]: string[] } = {
   "volume-off-fill": ["audio", "video", "av", "sound"],
   "toggle2-on": ["toggle", "switch", "checkbox"],
   "calendar-x": ["date", "time", "month", "remove", "delete"],
-  slash: ["shape", "stop", "ban", false, "math"],
+  slash: ["shape", "stop", "ban", "no", "math"],
   "file-earmark-richtext-fill": ["text", "doc", "document"],
   pass: ["pass"],
   "envelope-arrow-down": ["email", "message", "mail", "letter"],
@@ -2608,7 +2609,7 @@ export const ricons: { [key: string]: string[] } = {
   "bell-slash": ["notification", "silenced", "clock"],
   "eraser-fill": ["erase", "remove"],
   "filetype-php": ["file", "file type", "extension", "code"],
-  "slash-square": ["shape", "stop", "ban", false],
+  "slash-square": ["shape", "stop", "ban", "no"],
   "sign-merge-right-fill": ["road", "driving", "directions"],
   "c-circle-fill": ["copyright"],
   "skip-backward-circle": ["audio", "video", "av"],
@@ -2973,7 +2974,7 @@ export const ricons: { [key: string]: string[] } = {
   "stack-overflow": ["social"],
   alipay: ["payments"],
   "badge-ad": ["advertisement"],
-  "slash-square-fill": ["shape", "stop", "ban", false],
+  "slash-square-fill": ["shape", "stop", "ban", "no"],
   "arrow-up-circle": ["arrow", "circle"],
   "9-square-fill": ["number", "numeral"],
   bank: ["money", "finance", "banking", "market", "temple"],
@@ -3691,7 +3692,7 @@ export const ricons: { [key: string]: string[] } = {
   "layout-three-columns": ["layout", "columns"],
   "thermometer-snow": ["temperature", "weather"],
   "paint-bucket": ["color", "paint", "fill", "palette", "color"],
-  "ban-fill": [false, "not allowed"],
+  "ban-fill": ["no", "not allowed"],
   exposure: ["photo", "editing", "image", "picture"],
   "patch-plus": ["add"],
   "p-square-fill": ["parking"],
@@ -3740,41 +3741,47 @@ export const ricons: { [key: string]: string[] } = {
   "star-fill": ["shape", "like", "favorite"],
 };
 
-export function TextToSVG(text: string) {
+export function TextToSVG(text: string, height: number) {
   var d = "";
   const stride = 0;
+  var y = 0;
   var x = 0;
 
   for (let j = 0; j < text.length; j++) {
     let char = text.charCodeAt(j) - 32;
-    for (let i = 0; i < fonts[char].cords.length; i += 2) {
-      if (fonts[char].cords[i] == -69) {
-        i += 2;
-        if (i + 2 < fonts[char].cords.length) {
+    if (char == -22) {
+      y += height;
+      x = 0;
+    } else {
+      for (let i = 0; i < fonts[char].cords.length; i += 2) {
+        if (fonts[char].cords[i] == -69) {
+          i += 2;
+          if (i + 2 < fonts[char].cords.length) {
+            d +=
+              "M " +
+              (fonts[char].cords[i] + x) +
+              " " +
+          (fonts[char].cords[i + 1] + y) +
+              " ";
+          }
+        } else if (i == 0) {
           d +=
             "M " +
             (fonts[char].cords[i] + x) +
             " " +
-            fonts[char].cords[i + 1] +
+            (fonts[char].cords[i + 1] + y) +
+            " ";
+        } else {
+          d +=
+            "L " +
+            (fonts[char].cords[i] + x) +
+            " " +
+            (fonts[char].cords[i + 1] + y) +
             " ";
         }
-      } else if (i == 0) {
-        d +=
-          "M " +
-          (fonts[char].cords[i] + x) +
-          " " +
-          fonts[char].cords[i + 1] +
-          " ";
-      } else {
-        d +=
-          "L " +
-          (fonts[char].cords[i] + x) +
-          " " +
-          fonts[char].cords[i + 1] +
-          " ";
       }
+      x += fonts[char].maxx - fonts[char].minx + stride;
     }
-    x += fonts[char].maxx - fonts[char].minx + stride;
   }
 
   return d;

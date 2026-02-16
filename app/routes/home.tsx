@@ -46,12 +46,14 @@ declare module "fabric" {
   interface FabricObject {
     otype?: ObjectType;
     font?: number;
+    lheight?: number;
     data?: string;
   }
   // to have the properties typed in the exported object
   interface SerializedObjectProps {
     otype?: ObjectType;
     font?: number;
+    lheight?: number;
     data?: string;
   }
 }
@@ -80,9 +82,12 @@ export default function Home() {
   const [speed, setspeed] = useState(22);
   const icdiv = useRef<HTMLDivElement | null>(null);
   const updateText = (obj: FabricObject, text: string) => {
-    obj.set({ path: new Path(TextToSVG(text)).path });
+    console.log(obj.lheight)
+    obj.set({ path: new Path(TextToSVG(text, obj.lheight ?? 20)).path });
     obj.data = text;
     settyping(text);
+    obj.setDimensions();  
+    obj.setCoords()
     canvas?.requestRenderAll();
   };
   const updateIcon = (obj: FabricObject, key: string) => {
@@ -120,7 +125,7 @@ export default function Home() {
   };
 
   const createText = () => {
-    const path = new Path(TextToSVG("enter text hereeeeee"), {
+    const path = new Path(TextToSVG("enter text hereeeeee", 20), {
       left: 50,
       top: 50,
       fill: "",
@@ -129,6 +134,7 @@ export default function Home() {
       otype: ObjectType.Text,
       font: 0,
       data: "enter text hereeeeee",
+      lheight: 20
     });
     canvas?.add(path);
     canvas?.setActiveObject(path);
@@ -207,7 +213,6 @@ export default function Home() {
       height: 400,
       width: 400,
     });
-    console.log(createSvg());
     const params = new URLSearchParams(location.search);
     const b64 = params.get("svgB64");
     console.log(b64);
@@ -240,22 +245,6 @@ export default function Home() {
     setCanvas(c);
   }, []);
   useEffect(() => {}, [search]);
-  const createSvg = () => {
-    var d = "";
-    for (let i = 0; i < obj.cords.length; i += 2) {
-      if (obj.cords[i] == -69) {
-        i += 2;
-        if (i + 2 < obj.cords.length) {
-          d += "M " + obj.cords[i] + " " + obj.cords[i + 1] + " ";
-        }
-      } else if (i == 0) {
-        d += "M " + obj.cords[i] + " " + obj.cords[i + 1] + " ";
-      } else {
-        d += "L " + obj.cords[i] + " " + obj.cords[i + 1] + " ";
-      }
-    }
-    return d;
-  };
 
   return (
     <div className="flex items-center content-center justify-center">
@@ -350,7 +339,7 @@ export default function Home() {
         {activeObject?.otype == ObjectType.Text ? (
           <div>
             <h1 className="text-center text-xl font-bold">Text</h1>
-            <input
+            <textarea
               className="border w-5/6 rounded py-0.5  mb-1"
               value={typing.toString()}
               placeholder="Input text here"
@@ -358,6 +347,15 @@ export default function Home() {
               onKeyPressCapture={(e) => e.stopPropagation()}
               onKeyUpCapture={(e) => e.stopPropagation()}
               onChange={(e) => updateText(activeObject, e.target.value)}
+            ></textarea>
+            <input
+              className="border w-5/6 rounded py-0.5  mb-1"
+              defaultValue={activeObject?.lheight}
+              placeholder="Input text here"
+              onKeyDownCapture={(e) => e.stopPropagation()}
+              onKeyPressCapture={(e) => e.stopPropagation()}
+              onKeyUpCapture={(e) => e.stopPropagation()}
+              onChange={(e) => {activeObject.lheight = Number(e.target.value)}}
             ></input>
             <button
               className="border px-2 text-red-900 hover:text-red-500 hover:cursor-pointer"
