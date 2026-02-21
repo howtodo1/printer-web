@@ -90,15 +90,48 @@ export default function Home() {
     obj.setCoords();
     canvas?.requestRenderAll();
   };
-  const updateIcon = (obj: FabricObject, key: string) => {
-    fetch("/icons/" + key + ".svg")
-      .then((res) => res.text())
-      .then((text) =>
+  const updateIcon = (obj: FabricObject, key: string | null, file: File | null) => {
+    if (key) {
+      fetch("/icons/" + key + ".svg")
+        .then((res) => res.text())
+        .then((text) =>
+          loadSVGFromString(text).then((result) => {
+            const objects = result.objects.filter(
+              (o): o is FabricObject => o !== null,
+            );
+
+            const SVG = util.groupSVGElements(objects, result.options);
+            console.log(version);
+            console.log(SVG.get("path"));
+            const center = obj.getCenterPoint();
+
+            SVG.set({ originX: "center", originY: "center" });
+
+            SVG.scaleToWidth(obj.getScaledWidth());
+            SVG.scaleToHeight(obj.getScaledHeight());
+
+            SVG.set({
+              left: center.x,
+              top: center.y,
+              angle: obj.angle,
+            });
+            SVG.otype = ObjectType.Svg;
+            SVG.font = 0;
+            canvas?.remove(obj);
+            canvas?.add(SVG);
+            canvas?.setActiveObject(SVG);
+            canvas?.requestRenderAll();
+          }),
+        );
+    } else {
+      console.log("else");
+      console.log(file)
+      file?.text().then((text) =>
         loadSVGFromString(text).then((result) => {
           const objects = result.objects.filter(
             (o): o is FabricObject => o !== null,
           );
-
+          console.log(text)
           const SVG = util.groupSVGElements(objects, result.options);
           console.log(version);
           console.log(SVG.get("path"));
@@ -122,6 +155,7 @@ export default function Home() {
           canvas?.requestRenderAll();
         }),
       );
+    }
   };
 
   const createText = () => {
@@ -248,154 +282,6 @@ export default function Home() {
 
   return (
     <div className="flex items-center content-center justify-center">
-      <div className="border px-3 py-2 h-[300px] w-[200px] ">
-        {activeObject ? "" : "No object selected"}
-        {activeObject?.otype == ObjectType.Svg ? (
-          <div className="flex flex-col">
-            <h1 className="text-center text-xl font-bold">Icon</h1>
-            <input
-              className="border w-5/6 rounded py-0.5  mb-1"
-              placeholder="leave empty for all"
-              value={search.toString()}
-              onKeyDownCapture={(e) => e.stopPropagation()}
-              onKeyPressCapture={(e) => e.stopPropagation()}
-              onKeyUpCapture={(e) => e.stopPropagation()}
-              onChange={(e) => setsearch(e.target.value)}
-            ></input>
-            <button
-              className="border w-1/2 px-2 hover:text-gray-500 hover:cursor-pointer"
-              onClick={() => {
-                seticons(
-                  Object.keys(ricons).filter((key) => {
-                    return (
-                      ricons[key]?.some((tag) =>
-                        tag
-                          .toString()
-                          .toLowerCase()
-                          .includes(search.toString().toLowerCase()),
-                      ) || key.includes(search.toString().toLowerCase())
-                    );
-                  }),
-                );
-              }}
-            >
-              Search
-            </button>
-            <div>
-              <div
-                ref={icdiv}
-                className="flex space-x-2 mt-5 p-2 overflow-x-scroll h-[60px] border"
-              >
-                {icons.map((key) => {
-                  return (
-                    <img
-                      loading="lazy"
-                      decoding="async"
-                      onClick={() => updateIcon(activeObject, key)}
-                      className="hover:border"
-                      src={`/icons/${key}.svg`}
-                      alt="home"
-                      width={400}
-                    />
-                  );
-                })}
-              </div>
-            </div>
-            <div className="flex justify-between">
-              <button
-                onClick={() => {
-                  if (icdiv.current) {
-                    icdiv.current.scrollBy({ left: -100, behavior: "smooth" });
-                  }
-                }}
-                className="hover:text-gray-500 hover:cursor-pointer"
-              >
-                {"<-"}
-              </button>
-              <button
-                onClick={() => {
-                  if (icdiv.current) {
-                    icdiv.current.scrollBy({ left: 100, behavior: "smooth" });
-                  }
-                }}
-                className="hover:text-gray-500 hover:cursor-pointer"
-              >
-                {"->"}
-              </button>
-            </div>
-            <span>{`${icons.length} icons found`}</span>
-            <button
-              className="border w-1/2 px-2 text-red-900 hover:text-red-500 hover:cursor-pointer"
-              onClick={() => {
-                canvas?.remove(activeObject);
-              }}
-            >
-              Delete
-            </button>
-            <button
-              className="border w-1/2 px-2 mt-2 hover:text-gray-500 hover:cursor-pointer"
-              onClick={async () => {
-                let clone = await activeObject?.clone();
-                clone.top += 10;
-                clone.left += 10;
-                canvas?.add(clone);
-                canvas?.setActiveObject(clone);
-              }}
-            >
-              Duplicate
-            </button>
-          </div>
-        ) : (
-          ""
-        )}
-        {activeObject?.otype == ObjectType.Text ? (
-          <div>
-            <h1 className="text-center text-xl font-bold">Text</h1>
-            <textarea
-              className="border w-5/6 rounded py-0.5  mb-1"
-              value={typing.toString()}
-              placeholder="Input text here"
-              onKeyDownCapture={(e) => e.stopPropagation()}
-              onKeyPressCapture={(e) => e.stopPropagation()}
-              onKeyUpCapture={(e) => e.stopPropagation()}
-              onChange={(e) => updateText(activeObject, e.target.value)}
-            ></textarea>
-            <input
-              className="border w-5/6 rounded py-0.5  mb-1"
-              defaultValue={activeObject?.lheight}
-              placeholder="Input text here"
-              onKeyDownCapture={(e) => e.stopPropagation()}
-              onKeyPressCapture={(e) => e.stopPropagation()}
-              onKeyUpCapture={(e) => e.stopPropagation()}
-              onChange={(e) => {
-                activeObject.lheight = Number(e.target.value);
-              }}
-            ></input>
-            <button
-              className="border px-2 text-red-900 hover:text-red-500 hover:cursor-pointer"
-              onClick={() => {
-                canvas?.remove(activeObject);
-              }}
-            >
-              Delete
-            </button>
-            <button
-              className="border w-1/2 px-2 mt-2 hover:text-gray-500 hover:cursor-pointer"
-              onClick={async () => {
-                let clone = await activeObject?.clone();
-                clone.top += 10;
-                clone.left += 10;
-                canvas?.add(clone);
-                canvas?.setActiveObject(clone);
-              }}
-            >
-              Duplicate
-            </button>
-          </div>
-        ) : (
-          ""
-        )}
-      </div>
       <div className="flex h-screen flex-col items-center content-center justify-center">
         <div className="flex flex-col w-full px-6">
           <input
@@ -440,16 +326,183 @@ export default function Home() {
             <FontAwesomeIcon icon={faImage} />
           </button>
         </div>
-        <div className="flex rounded-6 border-b border-dashed m-6">
-          <div className="text-center">
-            canvas
+        <div className="flex rounded-6 text-center m-6">
+          <div className="mx-2">
+            <span>Object Properties</span>
+            <div className="border px-3 py-2 h-[400px] w-[200px] ">
+              {activeObject ? "" : "No object selected"}
+              {activeObject?.otype == ObjectType.Svg ? (
+                <div className="flex flex-col">
+                  <h1 className="text-center text-xl font-bold">Icon</h1>
+                  <input
+                    className="border w-5/6 rounded py-0.5  mb-1"
+                    placeholder="leave empty for all"
+                    value={search.toString()}
+                    onKeyDownCapture={(e) => e.stopPropagation()}
+                    onKeyPressCapture={(e) => e.stopPropagation()}
+                    onKeyUpCapture={(e) => e.stopPropagation()}
+                    onChange={(e) => setsearch(e.target.value)}
+                  ></input>
+                  <button
+                    className="border w-1/2 px-2 hover:text-gray-500 hover:cursor-pointer"
+                    onClick={() => {
+                      seticons(
+                        Object.keys(ricons).filter((key) => {
+                          return (
+                            ricons[key]?.some((tag) =>
+                              tag
+                                .toString()
+                                .toLowerCase()
+                                .includes(search.toString().toLowerCase()),
+                            ) || key.includes(search.toString().toLowerCase())
+                          );
+                        }),
+                      );
+                    }}
+                  >
+                    Search
+                  </button>
+                  <input
+                    className="border my-1 px-2 hover:text-gray-500 hover:cursor-pointer"
+                    type="file"
+                    onChange={(e) => {
+                      updateIcon(activeObject, null, e.target.files[0]);
+                    }}
+                  ></input>
+                  <div>
+                    <div
+                      ref={icdiv}
+                      className="flex space-x-2 mt-5 p-2 overflow-x-scroll h-[60px] border"
+                    >
+                      {icons.map((key) => {
+                        return (
+                          <img
+                            loading="lazy"
+                            decoding="async"
+                            onClick={() => updateIcon(activeObject, key)}
+                            className="hover:border"
+                            src={`/icons/${key}.svg`}
+                            alt="home"
+                            width={400}
+                          />
+                        );
+                      })}
+                    </div>
+                  </div>
+                  <div className="flex justify-between">
+                    <button
+                      onClick={() => {
+                        if (icdiv.current) {
+                          icdiv.current.scrollBy({
+                            left: -100,
+                            behavior: "smooth",
+                          });
+                        }
+                      }}
+                      className="hover:text-gray-500 hover:cursor-pointer"
+                    >
+                      {"<-"}
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (icdiv.current) {
+                          icdiv.current.scrollBy({
+                            left: 100,
+                            behavior: "smooth",
+                          });
+                        }
+                      }}
+                      className="hover:text-gray-500 hover:cursor-pointer"
+                    >
+                      {"->"}
+                    </button>
+                  </div>
+                  <span>{`${icons.length} icons found`}</span>
+
+                  <button
+                    className="border w-1/2 px-2 text-red-900 hover:text-red-500 hover:cursor-pointer"
+                    onClick={() => {
+                      canvas?.remove(activeObject);
+                    }}
+                  >
+                    Delete
+                  </button>
+                  <button
+                    className="border w-1/2 px-2 mt-2 hover:text-gray-500 hover:cursor-pointer"
+                    onClick={async () => {
+                      let clone = await activeObject?.clone();
+                      clone.top += 10;
+                      clone.left += 10;
+                      canvas?.add(clone);
+                      canvas?.setActiveObject(clone);
+                    }}
+                  >
+                    Duplicate
+                  </button>
+                </div>
+              ) : (
+                ""
+              )}
+              {activeObject?.otype == ObjectType.Text ? (
+                <div>
+                  <h1 className="text-center text-xl font-bold">Text</h1>
+                  <textarea
+                    className="border w-5/6 rounded py-0.5  mb-1"
+                    value={typing.toString()}
+                    placeholder="Input text here"
+                    onKeyDownCapture={(e) => e.stopPropagation()}
+                    onKeyPressCapture={(e) => e.stopPropagation()}
+                    onKeyUpCapture={(e) => e.stopPropagation()}
+                    onChange={(e) => updateText(activeObject, e.target.value)}
+                  ></textarea>
+                  <input
+                    className="border w-5/6 rounded py-0.5  mb-1"
+                    defaultValue={activeObject?.lheight}
+                    placeholder="Input text here"
+                    onKeyDownCapture={(e) => e.stopPropagation()}
+                    onKeyPressCapture={(e) => e.stopPropagation()}
+                    onKeyUpCapture={(e) => e.stopPropagation()}
+                    onChange={(e) => {
+                      activeObject.lheight = Number(e.target.value);
+                    }}
+                  ></input>
+                  <button
+                    className="border px-2 text-red-900 hover:text-red-500 hover:cursor-pointer"
+                    onClick={() => {
+                      canvas?.remove(activeObject);
+                    }}
+                  >
+                    Delete
+                  </button>
+                  <button
+                    className="border w-1/2 px-2 mt-2 hover:text-gray-500 hover:cursor-pointer"
+                    onClick={async () => {
+                      let clone = await activeObject?.clone();
+                      clone.top += 10;
+                      clone.left += 10;
+                      canvas?.add(clone);
+                      canvas?.setActiveObject(clone);
+                    }}
+                  >
+                    Duplicate
+                  </button>
+                </div>
+              ) : (
+                ""
+              )}
+            </div>
+          </div>
+          <div className="text-center border-b border-dashed">
+            <span>canvas</span>
             <canvas
               className={`${svg ? "" : "border-r"} w-full border-t border-l border-dashed`}
               id="danda"
             />
           </div>
-          <div className={` ${svg ? "" : "hidden"} text-center`}>
-            preview
+          <div
+            className={` ${svg ? "" : "hidden"} border-b border-dashed text-center`}
+          >
+            <span>preview</span>
             <canvas
               ref={canvasRef}
               className={` ${svg ? "" : "hidden"} border-t border-r border-dashed`}
