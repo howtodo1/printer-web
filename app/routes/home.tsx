@@ -24,6 +24,7 @@ export function meta({}: Route.MetaArgs) {
 import { createClient } from "@supabase/supabase-js";
 import { useLocation } from "react-router";
 
+// ther is a key here but
 // dont worry, this key is meant to be published
 export const supabase = createClient(
   "https://btpljlgfajycbpehdich.supabase.co",
@@ -537,7 +538,7 @@ export default function Home() {
             <span>preview</span>
             <canvas
               ref={canvasRef}
-              className={` ${svg ? "" : "hidden"} border-l md:border-l-0 border-t md: h-[360px] w-[360px] md:h-[400px] md:w-[400px] border-r border-dashed`}
+              className={` ${svg ? "" : "hidden"} border-l md:border-l-0 border-t h-[360px] w-[360px] md:h-[400px] md:w-[400px] border-r border-dashed`}
             />
           </div>
         </div>
