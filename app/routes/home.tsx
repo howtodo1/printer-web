@@ -248,10 +248,10 @@ export default function Home() {
   const location = useLocation();
   useEffect(() => {
     const isPhone = window.innerWidth <= 640;
-    console.log(isPhone)
+    console.log(isPhone);
     var c = new Canvas("danda", {
-      height: !isPhone? 400 : 360,
-      width: !isPhone? 400 : 360,
+      height: !isPhone ? 400 : 360,
+      width: !isPhone ? 400 : 360,
     });
     const params = new URLSearchParams(location.search);
     const b64 = params.get("svgB64");
@@ -288,7 +288,7 @@ export default function Home() {
 
   return (
     <div className="flex items-center content-center justify-center">
-      <div className="flex md:h-screen flex-col items-center content-center justify-center pb-2">
+      <div className="flex md:h-screen flex-col items-center content-center justify-center mb-6">
         <div className="flex flex-col md:w-full md:px-24 pb-2">
           <div className="flex flex-row justify-between">
             <span className="mx-2 font-bold">GCODE UP: </span>
@@ -378,12 +378,26 @@ export default function Home() {
                     Search
                   </button>
                   <input
-                    className="border my-1 px-2 hover:text-gray-500 hover:cursor-pointer"
                     type="file"
-                    onChange={(e) => {
-                      updateIcon(activeObject, null, e.target.files ? e.target.files[0] : null);
-                    }}
-                  ></input>
+                    accept=".svg,image/svg+xml"
+                    id="svg-upload"
+                    className="hidden"
+                    onChange={(e) =>
+                      updateIcon(
+                        activeObject,
+                        null,
+                        e.target.files ? e.target.files[0] : null,
+                      )
+                    }
+                  />
+
+                  {/* Custom button */}
+                  <label
+                    htmlFor="svg-upload"
+                    className="border w-1/2 my-2 px-2 hover:text-gray-500 hover:cursor-pointer"
+                  >
+                    Upload SVG
+                  </label>
                   <div>
                     <div
                       ref={icdiv}
@@ -459,7 +473,7 @@ export default function Home() {
                 ""
               )}
               {activeObject?.otype == ObjectType.Text ? (
-                <div>
+                <div className="flex flex-col">
                   <h1 className="text-center text-xl font-bold">Text</h1>
                   <textarea
                     className="border w-5/6 rounded py-0.5  mb-1"
@@ -470,19 +484,22 @@ export default function Home() {
                     onKeyUpCapture={(e) => e.stopPropagation()}
                     onChange={(e) => updateText(activeObject, e.target.value)}
                   ></textarea>
-                  <input
-                    className="border w-5/6 rounded py-0.5  mb-1"
-                    defaultValue={activeObject?.lheight}
-                    placeholder="Input text here"
-                    onKeyDownCapture={(e) => e.stopPropagation()}
-                    onKeyPressCapture={(e) => e.stopPropagation()}
-                    onKeyUpCapture={(e) => e.stopPropagation()}
-                    onChange={(e) => {
-                      activeObject.lheight = Number(e.target.value);
-                    }}
-                  ></input>
+                  <div className="flex flex-row space-x-2">
+                    <span className="font-bold">LINE SPACING: </span>
+                    <input
+                      className="border w-1/6 rounded py-0.5  mb-1"
+                      defaultValue={activeObject?.lheight}
+                      placeholder="Input text here"
+                      onKeyDownCapture={(e) => e.stopPropagation()}
+                      onKeyPressCapture={(e) => e.stopPropagation()}
+                      onKeyUpCapture={(e) => e.stopPropagation()}
+                      onChange={(e) => {
+                        activeObject.lheight = Number(e.target.value);
+                      }}
+                    ></input>
+                  </div>
                   <button
-                    className="border px-2 text-red-900 hover:text-red-500 hover:cursor-pointer"
+                    className="border w-1/2 px-2 text-red-900 hover:text-red-500 hover:cursor-pointer"
                     onClick={() => {
                       canvas?.remove(activeObject);
                     }}
@@ -510,7 +527,7 @@ export default function Home() {
           <div className="text-center border-b border-dashed">
             <span>canvas</span>
             <canvas
-              className={`${svg ? "" : "border-r"} bg-white  w-full border-t border-l border-dashed`}
+              className={`${svg ? "" : "border-r"}  w-full border-t border-l border-dashed`}
               id="danda"
             />
           </div>
