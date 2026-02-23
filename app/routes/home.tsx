@@ -539,6 +539,8 @@ export default function Home() {
             <canvas
               ref={canvasRef}
               className={` ${svg ? "" : "hidden"} border-l md:border-l-0 border-t h-[360px] w-[360px] md:h-[400px] md:w-[400px] border-r border-dashed`}
+              width={400}
+              height={400}
             />
           </div>
         </div>
