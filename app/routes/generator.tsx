@@ -645,7 +645,6 @@ export const fonts = [
   },
 ];
 export const ricons: { [key: string]: string[] } = {
-  "111": ["minecraft"],
   "menu-button": ["dropdown", "menu", "context", "app", "ui"],
   "filetype-txt": ["file", "file type", "extension"],
   "file-earmark-check": ["doc", "document", "check", "verified"],

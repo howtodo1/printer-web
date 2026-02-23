@@ -74,7 +74,7 @@ export default function Home() {
   const [svg, setsvg] = useState<String | null>(null);
   const [typing, settyping] = useState<String>("");
   const [search, setsearch] = useState<String>("");
-  const [icons, seticons] = useState<string[]>([]);
+  const [icons, seticons] = useState<string[]>(Object.keys(ricons));
   const [sent, setsent] = useState(false);
   const [download, setdownload] = useState(false);
   const [up, setup] = useState("G0 Z10");
@@ -90,7 +90,11 @@ export default function Home() {
     obj.setCoords();
     canvas?.requestRenderAll();
   };
-  const updateIcon = (obj: FabricObject, key: string | null, file: File | null) => {
+  const updateIcon = (
+    obj: FabricObject,
+    key: string | null,
+    file: File | null,
+  ) => {
     if (key) {
       fetch("/icons/" + key + ".svg")
         .then((res) => res.text())
@@ -125,13 +129,13 @@ export default function Home() {
         );
     } else {
       console.log("else");
-      console.log(file)
+      console.log(file);
       file?.text().then((text) =>
         loadSVGFromString(text).then((result) => {
           const objects = result.objects.filter(
             (o): o is FabricObject => o !== null,
           );
-          console.log(text)
+          console.log(text);
           const SVG = util.groupSVGElements(objects, result.options);
           console.log(version);
           console.log(SVG.get("path"));
@@ -243,9 +247,11 @@ export default function Home() {
   }, [activeObject]);
   const location = useLocation();
   useEffect(() => {
+    const isPhone = window.innerWidth <= 640;
+    console.log(isPhone)
     var c = new Canvas("danda", {
-      height: 400,
-      width: 400,
+      height: !isPhone? 400 : 360,
+      width: !isPhone? 400 : 360,
     });
     const params = new URLSearchParams(location.search);
     const b64 = params.get("svgB64");
@@ -282,35 +288,44 @@ export default function Home() {
 
   return (
     <div className="flex items-center content-center justify-center">
-      <div className="flex h-screen flex-col items-center content-center justify-center">
-        <div className="flex flex-col w-full px-6">
-          <input
-            value={up}
-            placeholder={"GCODE PEN UP"}
-            className="border w-5/6 px-1 rounded py-0.5  mb-1"
-            onKeyDownCapture={(e) => e.stopPropagation()}
-            onKeyPressCapture={(e) => e.stopPropagation()}
-            onKeyUpCapture={(e) => e.stopPropagation()}
-            onChange={(e) => setup(e.target.value)}
-          ></input>
-          <input
-            value={down}
-            placeholder={"GCODE PEN DOWN"}
-            className="border w-5/6 px-1 rounded py-0.5  mb-1"
-            onKeyDownCapture={(e) => e.stopPropagation()}
-            onKeyPressCapture={(e) => e.stopPropagation()}
-            onKeyUpCapture={(e) => e.stopPropagation()}
-            onChange={(e) => setdown(e.target.value)}
-          ></input>
-          <input
-            value={speed}
-            placeholder={"SPEED (mm/s)"}
-            className="border w-1/3 px-1 rounded py-0.5  mb-1"
-            onKeyDownCapture={(e) => e.stopPropagation()}
-            onKeyPressCapture={(e) => e.stopPropagation()}
-            onKeyUpCapture={(e) => e.stopPropagation()}
-            onChange={(e) => setspeed(Number(e.target.value))}
-          ></input>
+      <div className="flex md:h-screen flex-col items-center content-center justify-center pb-2">
+        <div className="flex flex-col md:w-full md:px-24 pb-2">
+          <div className="flex flex-row justify-between">
+            <span className="mx-2 font-bold">GCODE UP: </span>
+            <input
+              value={up}
+              placeholder={"GCODE PEN UP"}
+              className="border w-1/3 px-1 rounded py-0.5  mb-1"
+              onKeyDownCapture={(e) => e.stopPropagation()}
+              onKeyPressCapture={(e) => e.stopPropagation()}
+              onKeyUpCapture={(e) => e.stopPropagation()}
+              onChange={(e) => setup(e.target.value)}
+            ></input>
+          </div>
+          <div className="flex flex-row justify-between">
+            <span className="mx-2 font-bold">GCODE DOWN: </span>
+            <input
+              value={down}
+              placeholder={"GCODE PEN DOWN"}
+              className="border w-1/3 px-1 rounded py-0.5  mb-1"
+              onKeyDownCapture={(e) => e.stopPropagation()}
+              onKeyPressCapture={(e) => e.stopPropagation()}
+              onKeyUpCapture={(e) => e.stopPropagation()}
+              onChange={(e) => setdown(e.target.value)}
+            ></input>
+          </div>
+          <div className="flex flex-row justify-between">
+            <span className="mx-2 font-bold">SPEED (mm/s): </span>
+            <input
+              value={speed}
+              placeholder={"SPEED (mm/s)"}
+              className="border w-1/3 px-1 rounded py-0.5  mb-1"
+              onKeyDownCapture={(e) => e.stopPropagation()}
+              onKeyPressCapture={(e) => e.stopPropagation()}
+              onKeyUpCapture={(e) => e.stopPropagation()}
+              onChange={(e) => setspeed(Number(e.target.value))}
+            ></input>
+          </div>
         </div>
         <div className="flex w-[200px] content-center justify-around">
           <button
@@ -326,10 +341,10 @@ export default function Home() {
             <FontAwesomeIcon icon={faImage} />
           </button>
         </div>
-        <div className="flex rounded-6 text-center m-6">
+        <div className="flex flex-col md:flex-row items-center rounded-6 text-center m-6">
           <div className="mx-2">
             <span>Object Properties</span>
-            <div className="border px-3 py-2 h-[400px] w-[200px] ">
+            <div className="border bg-white px-3 py-2 md:h-[400px] md:w-[200px] h-[360px] w-[360px]">
               {activeObject ? "" : "No object selected"}
               {activeObject?.otype == ObjectType.Svg ? (
                 <div className="flex flex-col">
@@ -366,7 +381,7 @@ export default function Home() {
                     className="border my-1 px-2 hover:text-gray-500 hover:cursor-pointer"
                     type="file"
                     onChange={(e) => {
-                      updateIcon(activeObject, null, e.target.files[0]);
+                      updateIcon(activeObject, null, e.target.files ? e.target.files[0] : null);
                     }}
                   ></input>
                   <div>
@@ -379,7 +394,7 @@ export default function Home() {
                           <img
                             loading="lazy"
                             decoding="async"
-                            onClick={() => updateIcon(activeObject, key)}
+                            onClick={() => updateIcon(activeObject, key, null)}
                             className="hover:border"
                             src={`/icons/${key}.svg`}
                             alt="home"
@@ -495,7 +510,7 @@ export default function Home() {
           <div className="text-center border-b border-dashed">
             <span>canvas</span>
             <canvas
-              className={`${svg ? "" : "border-r"} w-full border-t border-l border-dashed`}
+              className={`${svg ? "" : "border-r"} bg-white  w-full border-t border-l border-dashed`}
               id="danda"
             />
           </div>
@@ -505,13 +520,11 @@ export default function Home() {
             <span>preview</span>
             <canvas
               ref={canvasRef}
-              className={` ${svg ? "" : "hidden"} border-t border-r border-dashed`}
-              width={400}
-              height={400}
+              className={` ${svg ? "" : "hidden"} border-l md:border-l-0 border-t md: h-[360px] w-[360px] md:h-[400px] md:w-[400px] border-r border-dashed`}
             />
           </div>
         </div>
-        <div className="flex space-x-2">
+        <div className="flex space-x-2 md:w-full w-5/6">
           <button
             className="border hover:text-gray-500 hover:cursor-pointer w-36"
             onClick={() => {

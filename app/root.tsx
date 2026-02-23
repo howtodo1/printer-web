@@ -36,7 +36,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <body>
         <div className="flex flex-col items-center pt-1 content-center justify-center w-full ">
           <h1 className="text-6xl text-center">penprint</h1>
-          <span className="pt-2 px-64">Please read the <Link className="text-blue-500 underline" to={"https://github.com/howtodo1/printer-web/blob/main/README.md"}>README</Link> if you have not yet</span>
+          <span className="pt-2 md:px-64">Please read the <Link className="text-blue-500 underline" to={"https://github.com/howtodo1/printer-web/blob/main/README.md"}>README</Link> for instructions</span>
           
         </div>
         {children}
@@ -69,6 +69,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 
   return (
     <main className="pt-16 p-4 container mx-auto">
+      
       <h1>{message}</h1>
       <p>{details}</p>
       {stack && (
