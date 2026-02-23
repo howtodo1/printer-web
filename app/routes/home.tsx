@@ -541,7 +541,7 @@ export default function Home() {
             />
           </div>
         </div>
-        <div className="flex space-x-2 md:w-full w-5/6">
+        <div className="flex justify-center space-x-2 md:w-full w-5/6">
           <button
             className="border hover:text-gray-500 hover:cursor-pointer w-36"
             onClick={() => {
